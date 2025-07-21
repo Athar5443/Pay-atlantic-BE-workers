@@ -1,0 +1,16 @@
+{
+  "name": "atlantic-backend-worker",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/index.js",
+  "scripts": {
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "itty-router": "^4.0.26",
+    "js-md5": "^0.8.3"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
