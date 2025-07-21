@@ -97,10 +97,10 @@ const jsonResponse = (data, options = {}) => {
   });
 };
 
-router.all('*', (request, env) => {
-  if (request.method === 'OPTIONS') {
-    return jsonResponse({}, { corsOrigin: env.CORS_ORIGIN });
-  }
+// --- KODE YANG DIPERBAIKI ---
+// Middleware ini sekarang HANYA menangani request dengan method OPTIONS.
+router.options('*', (request, env) => {
+  return jsonResponse({}, { corsOrigin: env.CORS_ORIGIN });
 });
 
 router.get('/api/events/:depositId/connect', (request, env) => {
@@ -167,6 +167,7 @@ router.post('/webhook', async (request, env) => {
   return jsonResponse({ message: 'Webhook received successfully' });
 });
 
+// Fallback untuk route yang tidak ditemukan
 router.all('*', () => new Response('404, Not Found!', { status: 404 }));
 
 
@@ -175,18 +176,8 @@ router.all('*', () => new Response('404, Not Found!', { status: 404 }));
 // =================================================================
 
 export default {
-  /**
-   * Ini adalah handler utama untuk semua request yang masuk ke Worker.
-   * Ia akan menggunakan router yang telah kita definisikan.
-   */
   async fetch(request, env, ctx) {
     return router.handle(request, env, ctx);
   },
-
-  /**
-   * Ini adalah bagian kunci. Kita mengekspor kelas Durable Object kita
-   * dengan nama yang sama seperti yang kita definisikan di wrangler.toml.
-   * Ini memberitahu Cloudflare bagaimana cara membuat instance Durable Object.
-   */
   DEPOSIT_STATUS: DepositStatusNotifier,
 };
